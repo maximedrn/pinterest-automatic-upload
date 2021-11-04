@@ -1,0 +1,31 @@
+{
+  "pin": [
+    {
+      "pinboard": "My Pinboard",
+      "file_path": "C:/Users/Admin/Desktop/Pinterest/image.png",
+      "title": "My Pin",
+      "description": "This is my pin",
+      "alt_text": "A beautiful dog",
+      "link": "https://google.com/",
+      "date": "25/12/2021 12:00"
+    },
+    {
+      "pinboard": "My Pinboard",
+      "file_path": "C:/Users/Admin/Desktop/Pinterest/image.png",
+      "title": "My Pin",
+      "description": "This is my pin",
+      "alt_text": "A beautiful dog",
+      "link": "https://google.com/",
+      "date": ""
+    },
+    {
+      "pinboard": "My Pinboard",
+      "file_path": "C:/Users/Admin/Desktop/Pinterest/image.png",
+      "title": "My Pin",
+      "description": "This is my pin",
+      "alt_text": "",
+      "link": "",
+      "date": ""
+    }
+  ]
+}
