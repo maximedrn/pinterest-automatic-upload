@@ -2,7 +2,6 @@
 @author: Maxime.
 
 Github: https://github.com/maximedrn
-Demonstration website: https://maximedrn.github.io/hcaptcha-test/
 Version: 1.0
 """
 
