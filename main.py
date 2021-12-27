@@ -2,17 +2,18 @@
 @author: Maxime.
 
 Github: https://github.com/maximedrn
-Version: 1.0
+Version: 1.1
 """
 
 # Colorama module: pip install colorama
-from colorama import init, Fore, Style
+from colorama import init, Fore, Style  # Do not work on MacOS and Linux.
 
 # Selenium module imports: pip install selenium
 from selenium import webdriver
-from selenium.common.exceptions import TimeoutException as TE
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait as WDW
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
 # Python default import.
@@ -23,11 +24,14 @@ import os
 
 
 """Colorama module constants."""
-init(convert=True)  # Init colorama module.
-red = Fore.RED  # Red color.
-green = Fore.GREEN  # Green color.
-yellow = Fore.YELLOW  # Yellow color.
-reset = Style.RESET_ALL  # Reset color attribute.
+if os.name == 'nt':
+    init(convert=True)  # Init the Colorama module.
+    red = Fore.RED  # Red color.
+    green = Fore.GREEN  # Green color.
+    yellow = Fore.YELLOW  # Yellow color.
+    reset = Style.RESET_ALL  # Reset color attribute.
+else:  # For MacOS and Linux users.
+    red, green, yellow, reset = '', '', '', ''
 
 
 class Data:
@@ -48,45 +52,41 @@ class Data:
 
     def create_data(self, data: list) -> None:
         """Store Pin data that can be get by Pinterest class."""
-        self.pinboard = data[0]  # Required.
-        self.file_path = data[1]  # Required.
-        self.title = data[2]  # Required.
-        self.description = data[3]  # Optional.
-        self.alt_text = data[4]  # Optional.
-        self.link = data[5]  # Optional.
-        self.date = data[6]  # Optional. Default: publish now.
+        self.pinboard = str(data[0])  # Required.
+        self.file_path = os.path.abspath(str(data[1]))  # Required.
+        self.title = str(data[2])  # Required.
+        self.description = str(data[3])  # Optional.
+        self.alt_text = str(data[4])  # Optional.
+        self.link = str(data[5])  # Optional.
+        self.date = str(data[6])  # Optional. Default: publish now.
 
-    def check_data(self) -> bool:
+    def check_data(self, format: str = '%d/%m/%Y %H:%M') -> bool:
         """Check if data format is correct and return a boolean."""
-        # Check if required values are missing.
         for data in [self.pinboard, self.file_path, self.title]:
-            if data == '':
+            if data == '':  # Check if required values are missing.
                 return False, 'Missing required value.'
         # Check if description and alt text is too long.
         if len(self.description) > 500 or len(self.alt_text) > 500:
             return False, 'Description or alt text is too long ' + \
                 '(maximum 500 characters long).'
-        # Check if title is too long.
-        if len(self.title) > 100:
+        if len(self.title) > 100:  # Check if title is too long.
             return False, 'Title is too long (maximum 100 characters long).'
         # Check if file to upload is missing.
-        if not os.path.isfile(self.file_path):
+        if not os.path.isfile(os.path.abspath(self.file_path)):
             return False, 'File doesn\'t exist.'
-        # Check date format.
-        if self.date != '':
+        if self.date != '':  # Check date format.
             try:
-                now = dt.strptime(dt.strftime(
-                    dt.now(), '%d/%m/%Y %H:%M'), '%d/%m/%Y %H:%M')
-                # Check if difference is less than 6 months.
-                if (dt.strptime(self.date, '%d/%m/%Y %H:%M')
+                now = dt.strptime(dt.strftime(dt.now(), format), format)
+                # Check if difference is less than 14 days.
+                if (dt.strptime(self.date, format)
                         - now).total_seconds() / 60 > 20160:
                     return False, 'Difference must be less than 14 days.'
                 # Check if starting date has passed.
-                if now > dt.strptime(self.date, '%d/%m/%Y %H:%M'):
+                if now > dt.strptime(self.date, format):
                     return False, 'Starting date has passed.'
             except ValueError:
                 return False, 'Date format is invalid.'
-            # If date is not "XX:00" or "XX:30".
+            # If hour is not "XX:00" or "XX:30".
             if self.date[-2:] != '30' and self.date[-2:] != '00':
                 return False, 'Time must be every 30 minutes.'
         return True, None
@@ -94,10 +94,8 @@ class Data:
     def format_data(self, number: int) -> None:
         """Format data in list."""
         self.number = number
-        if self.filetype == '.json':
-            self.json_file()
-        elif self.filetype == '.csv':
-            self.csv_file()
+        if self.filetype in ('.json', '.csv'):
+            eval(f'self{self.filetype}_file()')
         else:
             raise Exception(f'{red}File format is not supported.')
 
@@ -120,7 +118,7 @@ class Pinterest:
         """Set path of used file and start webdriver."""
         self.email = email  # Pinterest email.
         self.password = password  # Pinterest password.
-        self.webdriver_path = 'assets/chromedriver.exe'
+        self.webdriver_path = os.path.abspath('assets/chromedriver.exe')
         self.driver = self.webdriver()  # Start new webdriver.
         self.login_url = 'https://www.pinterest.com/login/'
         self.upload_url = 'https://www.pinterest.com/pin-builder/'
@@ -129,32 +127,30 @@ class Pinterest:
         """Start webdriver and return state of it."""
         options = webdriver.ChromeOptions()  # Configure options for Chrome.
         options.add_argument('--lang=en')  # Set webdriver language to English.
-        # options.add_argument('headless')  # Headless ChromeDriver.
         options.add_argument('log-level=3')  # No logs is printed.
         options.add_argument('--mute-audio')  # Audio is muted.
-        driver = webdriver.Chrome(self.webdriver_path, options=options)
+        driver = webdriver.Chrome(service=Service(  # DeprecationWarning using
+            self.webdriver_path), options=options)  # executable_path.
         driver.maximize_window()  # Maximize window to reach all elements.
         return driver
 
-    def element_clickable(self, element: str) -> None:
+    def clickable(self, element: str) -> None:
         """Click on element if it's clickable using Selenium."""
         WDW(self.driver, 5).until(EC.element_to_be_clickable(
             (By.XPATH, element))).click()
 
-    def element_visible(self, element: str):
+    def visible(self, element: str):
         """Check if element is visible using Selenium."""
-        return WDW(self.driver, 30).until(EC.visibility_of_element_located(
+        return WDW(self.driver, 15).until(EC.visibility_of_element_located(
             (By.XPATH, element)))
 
-    def element_send_keys(self, element: str, keys: str) -> None:
+    def send_keys(self, element: str, keys: str) -> None:
         """Send keys to element if it's visible using Selenium."""
         try:
-            WDW(self.driver, 5).until(EC.visibility_of_element_located(
-                (By.XPATH, element))).send_keys(keys)
-        except TE:
-            # Some elements are not visible but are still present.
-            WDW(self.driver, 5).until(EC.presence_of_element_located(
-                (By.XPATH, element))).send_keys(keys)
+            self.visible(element).send_keys(keys)
+        except Exception:  # Use JavaScript.
+            self.driver.execute_script(f'arguments[0].innerText = "{keys}"',
+                                       self.visible(element))
 
     def window_handles(self, window_number: int) -> None:
         """Check for window handles and wait until a specific tab is opened."""
@@ -169,16 +165,14 @@ class Pinterest:
             print('Login to Pinterest.', end=' ')
             self.driver.get(self.login_url)  # Go to the login URL.
             # Input email and password.
-            self.element_send_keys('//*[@id="email"]', self.email)
-            self.element_send_keys('//*[@id="password"]', self.password)
-            # Click on "Sign in" button.
-            self.element_clickable(
+            self.send_keys('//*[@id="email"]', self.email)
+            self.send_keys('//*[@id="password"]', self.password)
+            self.clickable(  # Click on "Sign in" button.
                 '//div[@data-test-id="registerFormSubmitButton"]/button')
-            # Wait until URL changes.
-            WDW(self.driver, 30).until(
+            WDW(self.driver, 30).until(  # Wait until URL changes.
                 lambda _: self.driver.current_url != self.login_url)
             print(f'{green}Logged.{reset}\n')
-        except TE:
+        except Exception:
             sys.exit(f'{red}Failed.{reset}\n')
 
     def upload_pins(self, pin: int) -> None:
@@ -186,63 +180,51 @@ class Pinterest:
         try:
             print(f'Uploading pins n°{pin + 1}/{data.lenght}.', end=' ')
             self.driver.get(self.upload_url)  # Go to upload pins URL.
-            # Click on button to change pinboard.
-            self.element_clickable(
-                '//button[@data-test-id="board-dropdown-select-button"]')
-            # Input pinboard name.
-            self.element_send_keys(
-                '//*[@id="pickerSearchField"]', data.pinboard)
-            # Select pinboard.
+            self.driver.implicitly_wait(5)  # Page is fully loaded?
+            self.clickable('//button['  # Click on button to change pinboard.
+                           '@data-test-id="board-dropdown-select-button"]')
             try:
-                self.element_clickable(
-                    '//div[@data-test-id="boardWithoutSection"]/div')
-            except TE:
-                raise TE('Pinboard name is invalid.')
-            # Upload image / video.
-            self.element_send_keys(
+                self.clickable(  # Select pinboard.
+                    f'//div[text()="{data.pinboard}"]/../../..')
+            except Exception:
+                raise Exception('Pinboard name is invalid.')
+            self.send_keys(  # Upload image / video.
                 '//input[contains(@id, "media-upload-input")]', data.file_path)
-            # Input a title.
-            self.element_send_keys(
+            self.send_keys(  # Input a title.
                 '//textarea[contains(@id, "pin-draft-title")]', data.title)
-            # Input a description.
-            self.element_send_keys(
-                '//*[contains(@id, "pin-draft-description")]/div/div/div[2]'
-                '/div/div/div/div/span/br', data.description)
-            # Click on "Add alt text" button.
-            self.element_clickable(
+            self.send_keys(  # Input a description.
+                '//*[@role="combobox"]/div/div/div/span/br', data.description)
+            self.clickable(  # Click on "Add alt text" button.
                 '//div[@data-test-id="pin-draft-alt-text-button"]/button')
-            # Input an alt text.
-            self.element_send_keys('//textarea[contains(@id, "pin-draft'
-                                   '-alttext")]', data.alt_text)
-            # Input a link.
-            self.element_send_keys(
+            self.send_keys('//textarea[contains('  # Input an alt text.
+                                   '@id, "pin-draft-alttext")]', data.alt_text)
+            self.send_keys(  # Input a link.
                 '//textarea[contains(@id, "pin-draft-link")]', data.link)
             if len(data.date) > 0:
                 date, time = data.date.split(' ')
                 # Select "Publish later" radio button.
-                self.element_clickable('//label[contains(@for, "pin-draft-'
+                self.clickable('//label[contains(@for, "pin-draft-'
                                        'schedule-publish-later")]')
                 # Input date.
-                self.element_clickable('//input[contains(@id, "pin-draft-'
+                self.clickable('//input[contains(@id, "pin-draft-'
                                        'schedule-date-field")]/../../../..')
                 # Get month name.
                 month_name = dt.strptime(date, "%d/%m/%Y").strftime("%B")
                 # Remove useless "0" in day number.
                 day = data.date[:2][1] if \
                     data.date[:2][0] == '0' else data.date[:2]
-                self.element_clickable('//div[contains(@aria-label, '
+                self.clickable('//div[contains(@aria-label, '
                                        f'"{month_name} {day}")]')
                 # Input time.
-                self.element_clickable('//input[contains(@id, "pin-draft-'
+                self.clickable('//input[contains(@id, "pin-draft-'
                                        'schedule-time-field")]/../../../..')
-                self.element_clickable(f'//div[@title="{time}"]/../..')
-            # Click on upload button.
-            self.element_clickable(
+                self.clickable(f'//div[@title="{time}"]/../..')
+            self.clickable(  # Click on upload button.
                 '//button[@data-test-id="board-dropdown-save-button"]')
             # If a dialog div appears, pin is uploaded.
-            self.element_visible('//div[@role="dialog"]')
+            self.visible('//div[@role="dialog"]')
             print(f'{green}Uploaded.{reset}')
-        except TE as error:
+        except Exception as error:
             print(f'{red}Failed. {error}{reset}')
 
 
@@ -255,49 +237,44 @@ def cls() -> None:
 def read_file(file_: str, question: str) -> str:
     """Read file or ask for data to write in text file."""
     if not os.path.isfile(f'assets/{file_}.txt'):
-        open(f'assets/{file_}.txt', 'a')
+        open(f'assets/{file_}.txt', 'a')  # Create a file if it doesn't exist.
     with open(f'assets/{file_}.txt', 'r+', encoding='utf-8') as file:
-        text = file.read()
-        if text == '':
-            text = input(question)
-            if input(f'Do you want to save your {file_} in'
-                     ' text file? (y/n) ').lower() == 'y':
-                file.write(text)
-                print(f'{green}Saved.{reset}')
-            else:
+        text = file.read()  # Read the file.
+        if text == '':  # If the file is empty.
+            text = input(question)  # Ask the question.
+            if input(f'Do you want to save your {file_} in '
+                     'a text file? (y/n) ').lower() != 'y':
                 print(f'{yellow}Not saved.{reset}')
+            else:
+                file.write(text)  # Write the text in file.
+                print(f'{green}Saved.{reset}')
         return text
 
 
 def data_file() -> str:
-    """Read data folder and extract JSON and CSV files."""
+    """Read the data folder and extract JSON, CSV and XLSX files."""
     while True:
-        folder = [glob(f'data/{extension}')
-                  for extension in ['*.json', '*.csv']]
-        print(f'{yellow}\nChoose your file:{reset}')
-        file_number = 0
-        files = []
-        print('0 - Browse file on PC.')
-        for extension in folder:
-            for file in extension:
+        file_number, files_list = 0, []
+        print(f'{yellow}\nChoose your file:{reset}\n0 - Browse a file on PC.')
+        for files in [glob(f'data/{extension}')  # Files of the data folder.
+                      for extension in ['*.json', '*.csv', '*.xlsx']]:
+            for file in files:
                 file_number += 1
-                files.append(file)
-                print(f'{file_number} - {file}')
+                files_list.append(file)
+                print(f'{file_number} - {os.path.abspath(file)}')
         answer = input('File number: ')
         cls()  # Clear console.
-        if answer.isdigit():
-            if int(answer) == 0:
-                # Browse file on PC.
-                from tkinter import Tk  # pip install tk
-                from tkinter.filedialog import askopenfilename
-                Tk().withdraw()  # Hide Tkinter tab.
-                return askopenfilename(filetypes=[('', '.json .csv')])
-            elif int(answer) <= len(files):
-                return files[int(answer) - 1]
-            else:
-                print(f'{red}File doesn\'t exist.{reset}')
-        else:
+        if not answer.isdigit():  # Check if answer is a number.
             print(f'{red}Answer must be an integer.{reset}')
+        elif int(answer) == 0:  # Browse a file on PC.
+            print(f'{yellow}Browsing on your computer...{reset}')
+            from tkinter import Tk  # Tkinter module: pip install tk
+            from tkinter.filedialog import askopenfilename
+            Tk().withdraw()  # Hide Tkinter tab.
+            return askopenfilename(filetypes=[('', '.json .csv .xlsx')])
+        elif int(answer) <= len(files_list):
+            return files_list[int(answer) - 1]  # Return path of file.
+        print(f'{red}File doesn\'t exist.{reset}')
 
 
 if __name__ == '__main__':
@@ -311,10 +288,8 @@ if __name__ == '__main__':
     password = read_file('password', '\nWhat is your Pinterest password? ')
 
     file = data_file()  # Ask for file.
-    # Init Data class.
-    data = Data(file, os.path.splitext(file)[1])
-    # Init Pinterest class.
-    pinterest = Pinterest(email, password)
+    data = Data(file, os.path.splitext(file)[1])  # Init Data class.
+    pinterest = Pinterest(email, password)  # Init Pinterest class.
     pinterest.login()
 
     for pin in range(data.lenght):
