@@ -6,14 +6,14 @@
 
 # Table of contents:
 
-* **[Changelog](https://github.com/maximedrn/pinterest-automatic-uploader#changelog).**
-* **[What does this bot do?](https://github.com/maximedrn/pinterest-automatic-uploader#what-does-this-bot-do)**
-* **[To do list](https://github.com/maximedrn/pinterest-automatic-uploader#to-do-list).**
-* **[Instructions](https://github.com/maximedrn/pinterest-automatic-uploader#instructions)**.
-  * [Basic installation of Python for beginners](https://github.com/maximedrn/pinterest-automatic-uploader#basic-installation-of-python-for-beginners).
-  * [Configuration of the bot](https://github.com/maximedrn/pinterest-automatic-uploader#configuration-of-the-bot).
-* **[Known issues](https://github.com/maximedrn/pinterest-automatic-uploader#known-issues).**
-* **[Data files structure](https://github.com/maximedrn/pinterest-automatic-uploader#data-files-structure).**
+* **[Changelog](https://github.com/maximedrn/pinterest-automatic-upload#changelog).**
+* **[What does this bot do?](https://github.com/maximedrn/pinterest-automatic-upload#what-does-this-bot-do)**
+* **[To do list](https://github.com/maximedrn/pinterest-automatic-upload#to-do-list).**
+* **[Instructions](https://github.com/maximedrn/pinterest-automatic-upload#instructions)**.
+  * [Basic installation of Python for beginners](https://github.com/maximedrn/pinterest-automatic-upload#basic-installation-of-python-for-beginners).
+  * [Configuration of the bot](https://github.com/maximedrn/pinterest-automatic-upload#configuration-of-the-bot).
+* **[Known issues](https://github.com/maximedrn/pinterest-automatic-upload#known-issues).**
+* **[Data files structure](https://github.com/maximedrn/pinterest-automatic-upload#data-files-structure).**
 
 ## Changelog:
 
@@ -76,7 +76,7 @@ class Pinterest:
     * create and open the `assets/email.txt` file, and then write your Pinterest email;
     * create and open the `assets/password.txt` file, and then write your Pinterest password.
   * Create your Pins data file containing all details of each Pin. It can be a JSON or CSV file. Save it in the data folder.  
-    **[What structure should the files have?](https://github.com/maximedrn/pinterest-automatic-uploader#data-files-structure)**
+    **[What structure should the files have?](https://github.com/maximedrn/pinterest-automatic-upload#data-files-structure)**
     
 ## Known issues:
 
@@ -136,4 +136,4 @@ class Pinterest:
       </tbody>
    </table>
 
-   You should have something like this:  [JSON](https://github.com/maximedrn/pinterest-automatic-uploader/blob/master/data/json_structure.json), [CSV](https://github.com/maximedrn/pinterest-automatic-uploader/blob/master/data/csv_structure.csv).
+   You should have something like this:  [JSON](https://github.com/maximedrn/pinterest-automatic-upload/blob/master/data/json_structure.json), [CSV](https://github.com/maximedrn/pinterest-automatic-upload/blob/master/data/csv_structure.csv).
