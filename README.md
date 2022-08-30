@@ -3,6 +3,8 @@
 * **(_Version 1.1 - December 27, 2021_).**
 * Note: The upload limit on Pinterest is about 150 pins in a row.  
   **You can do multiple upload sessions in a day but risk having your account suspended.**
+  
+_**This script is not maintained anymore. If you want to make some corrections concerning the input of images/videos and the selection of the Pinboard, I can integrate them into the script.**_
 
 # Table of contents:
 
