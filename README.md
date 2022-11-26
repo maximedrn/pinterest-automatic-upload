@@ -1,7 +1,7 @@
 # Automatically upload as many Pins as you want to Pinterest.
 
-**Version 1.1 - December 27, 2021**
-Note: The upload limit on Pinterest is about 150 pins in a row. **You can do multiple upload sessions in a day but risk having your account suspended.**
+**Version 1.1 - December 27, 2021**  
+Note: The upload limit on Pinterest is about 150 pins in a row. **You can do multiple upload sessions in a day but risk having your account suspended.**  
 _**This script is not maintained anymore in free version.**_
 
 
