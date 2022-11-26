@@ -1,17 +1,16 @@
 # Automatically upload as many Pins as you want to Pinterest.
+_The upload limit on Pinterest is about 150 pins in a row. **You can do multiple upload sessions in a day but risk having your account suspended.**_
 
 **Version 1.1 - December 27, 2021**  
-Note: The upload limit on Pinterest is about 150 pins in a row. **You can do multiple upload sessions in a day but risk having your account suspended.**  
-_**This script is not maintained anymore in free version.**_
-
+_**This script is not maintained anymore for free.**_
 
 ## Pinterest Pinbuilder
 
 https://user-images.githubusercontent.com/91475935/204109238-1476af4c-c173-4ae1-902e-5d76bac99a73.mp4
 
-With this tool, you can automatically upload your Pins to Pinterest. This tool has an elegant graphical interface and is very easy to use.
+With this tool, you can **automatically upload your Pins to Pinterest**. This tool has an elegant graphical interface and is very easy to use.
 
-All you have to do is create a file with all the necessary information for each of your Pins. You can choose your Pinboard, add a title, a description, an alt text, a link to an external website and schedule your Pins (only if you have a business account). Finally, all you have to do is select this file and start the process. The tool will do everything for you automatically.
+All you have to do is **create a file with all the necessary information for each of your Pins**. You can choose your **Pinboard, add a title, a description, an alt text, a link to an external website and schedule your Pins** (only if you have a business account). Finally, all you have to do is select this file and start the process. **The tool will do everything for you automatically.**
 
 
 ## Table of contents:
@@ -65,7 +64,7 @@ The upload limit on Pinterest is about 150 pins in a row. **You can do multiple 
   * Download the [ChromeDriver executable](https://chromedriver.chromium.org/downloads) that is compatible with the actual version of your Google Chrome browser and your OS (Operating System). Refer to: _[What version of Google Chrome do I have?](https://www.whatismybrowser.com/detect/what-version-of-chrome-do-i-have)_
   * Extract the executable from the ZIP file and copy/paste it in the `assets/` folder of the repository. You may need to change the path of the file:
 
-```python
+    ```python
     class Pinterest:
         """Main class of the Pinterest uploader."""
 
