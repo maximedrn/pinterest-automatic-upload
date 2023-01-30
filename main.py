@@ -17,8 +17,8 @@ from selenium.webdriver.common.by import By
 
 # Python default import.
 from datetime import datetime as dt
-from glob import glob
 import time as t
+from glob import glob
 import sys
 import os
 
@@ -183,33 +183,33 @@ class Pinterest:
             self.driver.implicitly_wait(5)  # Page is fully loaded?
             self.clickable('//button['  # Click on button to change pinboard.
                            '@data-test-id="board-dropdown-select-button"]')
-            t.sleep(3)
+            t.sleep(5)
             try:
                 self.clickable(  # Select pinboard.
                     f'//div[text()="{data.pinboard}"]/../../..')
-                t.sleep(3)
+                t.sleep(5)
             except Exception:
                 raise Exception('Pinboard name is invalid.')
             self.driver.find_element(by=By.XPATH, value="//input[contains(@id, 'media-upload-input')]").send_keys(data.file_path)
-            t.sleep(3)
-            self.clickable(  # Click on update Button
+            t.sleep(5)
+            self.clickable(  # Click on update
                 '//div[@data-test-id="save-edit-button"]/button')
-            t.sleep(3)
+            t.sleep(5)
             self.send_keys(  # Input a title.
                 '//textarea[contains(@id, "pin-draft-title")]', data.title)
-            t.sleep(3)
+            t.sleep(5)
             self.send_keys(  # Input a description.
-                '//*[@role="combobox"]/div/div/div/span/br', data.description)
-            t.sleep(3)
+                '//*[@role="combobox"]/div/div/div', data.description)
+            t.sleep(5)
             self.clickable(  # Click on "Add alt text" button.
                 '//div[@data-test-id="pin-draft-alt-text-button"]/button')
             t.sleep(3)
             self.send_keys('//textarea[contains('  # Input an alt text.
                                    '@id, "pin-draft-alttext")]', data.alt_text)
-            t.sleep(3)
+            t.sleep(5)
             self.send_keys(  # Input a link.
                 '//textarea[contains(@id, "pin-draft-link")]', data.link)
-            t.sleep(3)
+            t.sleep(5)
             if len(data.date) > 0:
                 date, time = data.date.split(' ')
                 # Select "Publish later" radio button.
@@ -228,7 +228,6 @@ class Pinterest:
                 # Input time.
                 self.clickable('//input[contains(@id, "pin-draft-'
                                        'schedule-time-field")]/../../../..')
-                # AM -> PM
                 self.clickable(f'//div[contains(text(), "{time} AM")]')
             self.clickable(  # Click on upload button.
                 '//button[@data-test-id="board-dropdown-save-button"]')
