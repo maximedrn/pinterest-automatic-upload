@@ -187,12 +187,14 @@ class Pinterest:
                     f'//div[text()="{data.pinboard}"]/../../..')
             except Exception:
                 raise Exception('Pinboard name is invalid.')
-            self.send_keys(  # Upload image / video.
-                '//input[contains(@id, "media-upload-input")]', data.file_path)
+                #Upload IMG
+            self.driver.find_element(by=By.XPATH, value="//input[contains(@id, 'media-upload-input')]").send_keys(data.file_path)
+            self.clickable(  # Click on "update" for img
+                '//div[@data-test-id="save-edit-button"]/button')
             self.send_keys(  # Input a title.
                 '//textarea[contains(@id, "pin-draft-title")]', data.title)
             self.send_keys(  # Input a description.
-                '//*[@role="combobox"]/div/div/div/span/br', data.description)
+                '//*[@role="combobox"]/div/div/div', data.description)
             self.clickable(  # Click on "Add alt text" button.
                 '//div[@data-test-id="pin-draft-alt-text-button"]/button')
             self.send_keys('//textarea[contains('  # Input an alt text.
@@ -217,7 +219,8 @@ class Pinterest:
                 # Input time.
                 self.clickable('//input[contains(@id, "pin-draft-'
                                        'schedule-time-field")]/../../../..')
-                self.clickable(f'//div[@title="{time}"]/../..')
+                #AM can be set to PM
+                self.clickable(f'//div[contains(text(), "{time} AM")]')
             self.clickable(  # Click on upload button.
                 '//button[@data-test-id="board-dropdown-save-button"]')
             # If a dialog div appears, pin is uploaded.
