@@ -10,7 +10,7 @@ https://user-images.githubusercontent.com/91475935/204109238-1476af4c-c173-4ae1-
 
 With this tool, you can **automatically upload your Pins to Pinterest**. This tool has an elegant graphical interface and is very easy to use.
 
-All you have to do is **create a file with all the necessary information for each of your Pins**. You can choose your **Pinboard, add a title, a description, an alt text, a link to an external website and schedule your Pins** (only if you have a business account). Finally, all you have to do is select this file and start the process. **The tool will do everything for you automatically.**
+All you have to do is **create a file with all the necessary information for each of your Pins**. You can choose your **Pinboard, add a title, a description, an alt text, a link to an external website and schedule your Pins** (only if you have a business account). Finally, all you have to do is select this file and start the process. **The tool will do everything for you automatically**. **Available [here](https://maximedrn.gumroad.com/l/pinterest-pinbuilder)**.
 
 
 ## Table of contents:
