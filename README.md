@@ -1,28 +1,136 @@
-# Pinterest Pinbuilder
+# Automatically upload as many Pins as you want to Pinterest.
 
-This tool lets you automate tasks for as many Pinterest accounts as you like.  
-**Turn the tedious task of daily uploading into something fast and fun.**
+**Version 1.1 - December 27, 2021** _**This script is not maintained anymore.**_  
+The upload limit on Pinterest is about 150 pins in a row.
 
-**[CLICK HERE TO GET THE TOOL](https://maximedrn.gumroad.com/l/pinterest-pinbuilder)**
+## Table of contents:
 
-[![](https://public-files.gumroad.com/s99g9q8ej6u3i9cws1hghiixkweh)](https://maximedrn.gumroad.com/l/pinterest-pinbuilder)
+* **[Changelog](https://github.com/maximedrn/pinterest-automatic-upload#changelog).**
+* **[What does this bot do?](https://github.com/maximedrn/pinterest-automatic-upload#what-does-this-bot-do)**
+* **[Instructions](https://github.com/maximedrn/pinterest-automatic-upload#instructions)**.
+  * [Basic installation of Python for beginners](https://github.com/maximedrn/pinterest-automatic-upload#basic-installation-of-python-for-beginners).
+  * [Configuration of the bot](https://github.com/maximedrn/pinterest-automatic-upload#configuration-of-the-bot).
+* **[Known issues](https://github.com/maximedrn/pinterest-automatic-upload#known-issues).**
+* **[Data files structure](https://github.com/maximedrn/pinterest-automatic-upload#data-files-structure).**
 
-## What is this tool?
 
-Pinterest Pinbuilder is a tool that **automate**s requests made to Pinterest servers. The tool simulates the actions you would take manually from their website. The tool has an elegant, simple and **easy-to-use** interface. Anyone with little experience will be able to use the tool with ease.
+## Changelog:
 
-All you have to do is select your images and videos and customize them by adding any information you wish. Then log in to a new account, or select one you've already added. Finally, start the Pin creation process.
+* **Version 1.1:**
+  * Pinboard issue fixed.
+  * Description issue fixed.
+  * Minor bugs fixed. 
 
-## Membership
+* **Version 1.0:** 
+  * Inital commit.
 
-Once you have subscribed to the tool, you will be able to use it without limit and with as many accounts as you wish throughout its period of validity.
 
-## Contact
+## What does this bot do?
 
-If you have any requests, please do not hesitate to contact me using one of the methods below:
+This script allows you to upload as many Pins (150 in a row) as you want to Pinterest, all automatically and quickly (about 4 Pins per minute).  
+The upload limit on Pinterest is about 150 pins in a row. **You can do multiple upload sessions in a day but risk having your account suspended.**
 
-- Email: maxime_drean@yahoo.com
-- Telegram: https://t.me/maximedrn or https://t.me/pinterest_pinbuilder
-- Form: https://forms.gle/9km3qPYx8ETi6jdH8
 
-https://user-images.githubusercontent.com/91475935/204109238-1476af4c-c173-4ae1-902e-5d76bac99a73.mp4
+## Instructions:
+
+### Basic installation of Python for beginners:
+  * Download this repository or clone it:
+  
+  ```
+  git clone https://github.com/maximedrn/pinterest-automatic-uploader.git
+  ```
+  * It requires [Python](https://www.python.org/) 3.7 or a newest version.
+  * Install [pip](https://pip.pypa.io/en/stable/installation/) to be able to have needed Python modules.
+  * Open a command prompt in repository folder and type:
+  
+  ```
+  pip install -r requirements.txt
+  ```
+
+
+### Configuration of bot:
+
+  * Download and install [Google Chrome](https://www.google.com/intl/en_en/chrome/).
+  * Download the [ChromeDriver executable](https://chromedriver.chromium.org/downloads) that is compatible with the actual version of your Google Chrome browser and your OS (Operating System). Refer to: _[What version of Google Chrome do I have?](https://www.whatismybrowser.com/detect/what-version-of-chrome-do-i-have)_
+  * Extract the executable from the ZIP file and copy/paste it in the `assets/` folder of the repository. You may need to change the path of the file:
+
+```python
+    class Pinterest:
+        """Main class of the Pinterest uploader."""
+
+        def __init__(self, email: str, password: str) -> None:
+            """Set path of used file and start webdriver."""
+            self.email = email  # Pinterest email.
+            self.password = password  # Pinterest password.
+            self.webdriver_path = os.path.abspath('assets/chromedriver.exe')  # Edit this line with your path.
+            self.driver = self.webdriver()  # Start new webdriver.
+            self.login_url = 'https://www.pinterest.com/login/'
+            self.upload_url = 'https://www.pinterest.com/pin-builder/'
+```
+  * **Optional:** the email and the password are asked when you run the bot, but you can:
+    * create and open the `assets/email.txt` file, and then write your Pinterest email;
+    * create and open the `assets/password.txt` file, and then write your Pinterest password.
+  * Create your Pins data file containing all details of each Pin. It can be a JSON or CSV file. Save it in the data folder.  
+    **[What structure should the files have?](https://github.com/maximedrn/pinterest-automatic-upload#data-files-structure)**
+
+
+## Known issues:
+
+* If you are using a Linux distribution or MacOS, you may need to change some parts of the code:  
+  * ChromeDriver extension may need to be changed from `.exe` to something else.
+* **If you use a JSON file for your Pins data, the file path should not contain a unique "\\". It can be a "/" or a "\\\\":**
+
+```json
+  "file_path": "C:/Users/Admin/Desktop/Pinterest/image.png",
+  // or:
+  "file_path": "C:\\Users\\Admin\\Desktop\\Pinterest\\image.png",
+  // but not:
+  "file_path": "C:\Users\Admin\Desktop\Pinterest\image.png", // You can see that "\" is highlighted in red.
+  ```
+
+* ### Data files structure:
+
+   * <strong>required value *</strong>
+          
+   <br>
+   <table>
+      <tbody>
+         <tr>
+            <td>Settings</td>
+            <td>Types</td>
+            <td>Examples</td>
+         </tr>
+         <tr>
+            <td><strong>Pinboard *</strong></td>
+            <td>String</td>
+         </tr>
+         <tr>
+            <td><strong>File Path *</strong></td>
+            <td>String</td>
+         </tr>
+         <tr>
+            <td><strong>Title *</strong></td>
+            <td>String (maximum 100 characters).</td>
+         </tr>
+         <tr>
+            <td>Description</td>
+            <td>String (maximum 500 characters).</td>
+         </tr>
+         <tr>
+            <td>Alt text</td>
+            <td>String (maximum 500 characters).</td>
+         </tr>
+         <tr>
+            <td>Link</td>
+            <td>String</td>
+         </tr>
+         <tr>
+            <td>Date</td>
+            <td>String (Maximum 14 days later)
+              <br>(Format: DD/MM/YYYY HH:MM).</td>
+            <td>"01/01/2022 12:00" or "01/01/2022 15:30"</td>
+         </tr>
+      </tbody>
+   </table>
+
+You should have something like this:  [JSON](https://github.com/maximedrn/pinterest-automatic-upload/blob/master/data/json_structure.json), [CSV](https://github.com/maximedrn/pinterest-automatic-upload/blob/master/data/csv_structure.csv).
